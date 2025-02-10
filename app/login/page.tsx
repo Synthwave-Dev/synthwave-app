@@ -1,23 +1,23 @@
-// pages/login.js
 "use client";
 
-import { useState } from 'react';
-import { supabase } from '../../utils/supabaseClient';
-import { useRouter } from 'next/navigation';
+import { useState } from "react";
+import { supabase } from "../../utils/supabaseClient";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [errorMsg, setErrorMsg] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMsg, setErrorMsg] = useState("");
   const router = useRouter();
 
-  const handleLogin = async (e) => {
+  // Specify the type for the event parameter
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const { error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
       setErrorMsg(error.message);
     } else {
-      router.push('/dashboard');
+      router.push("/dashboard");
     }
   };
 
