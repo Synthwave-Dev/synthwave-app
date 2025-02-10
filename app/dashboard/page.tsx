@@ -4,8 +4,17 @@ import { useState, useEffect } from "react";
 import { supabase } from "../../utils/supabaseClient";
 import { useRouter } from "next/navigation";
 
+// Define the UserProfile interface
+interface UserProfile {
+  id: string;
+  name: string;
+  balance: number;
+  created_at: string;
+}
+
 export default function Dashboard() {
-  const [profile, setProfile] = useState<any>(null);
+  // Use the interface instead of any
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [transferAmount, setTransferAmount] = useState("");
   const [saleAmount, setSaleAmount] = useState("");
   const [message, setMessage] = useState("");
@@ -46,7 +55,7 @@ export default function Dashboard() {
       .from("transactions")
       .insert([
         {
-          user_id: profile.id,
+          user_id: profile?.id,
           type: "transfer",
           amount: parseFloat(transferAmount),
         },
@@ -66,7 +75,7 @@ export default function Dashboard() {
       .from("transactions")
       .insert([
         {
-          user_id: profile.id,
+          user_id: profile?.id,
           type: "sale",
           amount: parseFloat(saleAmount),
         },
@@ -87,11 +96,10 @@ export default function Dashboard() {
 
   // Password Reset function
   const handleResetPassword = async () => {
-    // Retrieve the current user's email from Supabase
     const { data: { user } } = await supabase.auth.getUser();
     if (user && user.email) {
       const { error } = await supabase.auth.resetPasswordForEmail(user.email, {
-        redirectTo: window.location.origin + "/reset-password", // Adjust redirect URL as needed
+        redirectTo: window.location.origin + "/reset-password",
       });
       if (error) {
         setMessage(error.message);
@@ -110,14 +118,12 @@ export default function Dashboard() {
       <header className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Synthwave Dashboard</h1>
         <div className="space-x-2">
-          {/* Password Reset Button */}
           <button
             onClick={handleResetPassword}
             className="bg-yellow-500 text-white px-4 py-2 rounded"
           >
             Reset Password
           </button>
-          {/* Logout Button */}
           <button
             onClick={handleLogout}
             className="bg-red-500 text-white px-4 py-2 rounded"
@@ -138,7 +144,6 @@ export default function Dashboard() {
       {message && <p className="mb-4 text-green-600">{message}</p>}
 
       <section className="grid md:grid-cols-2 gap-8">
-        {/* Crypto Transfer Form */}
         <form onSubmit={handleTransfer} className="bg-white p-4 rounded shadow">
           <h3 className="text-lg font-semibold mb-4">Transfer Crypto</h3>
           <input
@@ -150,15 +155,11 @@ export default function Dashboard() {
             className="border p-2 mb-4 w-full"
             required
           />
-          <button
-            type="submit"
-            className="bg-blue-500 text-white py-2 w-full rounded"
-          >
+          <button type="submit" className="bg-blue-500 text-white py-2 w-full rounded">
             Request Transfer
           </button>
         </form>
 
-        {/* Crypto Sale Form */}
         <form onSubmit={handleSale} className="bg-white p-4 rounded shadow">
           <h3 className="text-lg font-semibold mb-4">Sell Crypto</h3>
           <input
@@ -170,10 +171,7 @@ export default function Dashboard() {
             className="border p-2 mb-4 w-full"
             required
           />
-          <button
-            type="submit"
-            className="bg-green-500 text-white py-2 w-full rounded"
-          >
+          <button type="submit" className="bg-green-500 text-white py-2 w-full rounded">
             Request Sale
           </button>
         </form>
