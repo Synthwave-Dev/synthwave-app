@@ -1,9 +1,9 @@
 // app/signup/page.tsx
-"use client"; // Enable client-side rendering if needed
+"use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // In Next.js 13, use next/navigation for client routing
-import { supabase } from "../../utils/supabaseClient"; // Adjust the path as necessary
+import { supabase } from "../../utils/supabaseClient";
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
   const [email, setEmail] = useState("");
@@ -14,10 +14,14 @@ export default function SignUp() {
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const { error } = await supabase.auth.signUp(
-      { email, password },
-      { data: { name } }
-    );
+    // Updated signUp call with a single object parameter
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { name }
+      }
+    });
     if (error) {
       setErrorMsg(error.message);
     } else {
